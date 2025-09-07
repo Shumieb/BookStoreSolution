@@ -1,0 +1,119 @@
+﻿@page "/edit-book/{id:int}"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit Book</PageTitle>
+
+<div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-custom-dark">
+
+    <h3 class="text-center text-white">Edit Book</h3>
+
+    <div class="my-3 mx-auto">
+        <div class="">
+            <EditForm Model="@book"
+                      FormName="editBook"
+                      OnValidSubmit="HandleSubmit"
+                      Enhance>
+                <DataAnnotationsValidator />
+
+                <div class="mb-3 text-white">
+                    <label for="name" class="form-label">Name</label>
+                    <InputText id="name" @bind-Value="book.Name" class="form-control" />
+                    <ValidationMessage For="() => book.Name" class="text-danger mt-1" />
+                </div>
+
+                <div class="mb-3 text-white">
+                    <label for="author" class="form-label">Author</label>
+                    <InputSelect id="genre" @bind-Value="book.AuthorId" class="form-select">
+                        <option value="">Select an Author</option>
+                        @foreach (var author in authors)
+                        {
+                            <option value="@author.AuthorId">@author.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => book.AuthorId" class="text-danger mt-1" />
+                </div>
+
+                <div class="mb-3 text-white">
+                    <label for="price" class="form-label">Price</label>
+                    <InputNumber id="price" @bind-Value="book.Price" class="form-control" />
+                    <ValidationMessage For="() => book.Price" class="text-danger mt-1" />
+                </div>
+
+                <div class="mb-3 text-white">
+                    <label for="releaseDate" class="form-label">Release Date </label>
+                    <InputDate id="releaseDate" @bind-Value="book.ReleaseDate" class="form-control" />
+                </div>
+
+                <div class="py-3 text-center">
+                    <button type="submit" class="btn btn-primary me-2">Edit</button>
+                    <a role="button" class="btn btn-secondary" href="/">Cancel</a>
+                </div>
+
+            </EditForm>
+
+        </div>
+    </div>
+
+
+
+
+</div>
+
+@code {
+
+    [Parameter]
+    public int? id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Book book { get; set; } = new()
+    {
+        Name = string.Empty,
+        AuthorId = null,
+        Price = 0M,
+        ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
+    };
+
+    private Book[] books =
+        {
+            new Book{BookId=1, Name="Lord of the rings", Price=24.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=2, Name="Lord of the rings 1", Price=4.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=3, Name="Harry Potter", Price=8.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=4, Name="Harry Potter 2", Price=14.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
+    };
+
+
+    private Author[] authors =
+        {
+            new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
+            new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
+    };
+
+    protected override void OnParametersSet()
+    {
+        if (id is not null)
+        {
+            Book? foundBook = books.FirstOrDefault(b => b.AuthorId == id); 
+            if(foundBook is not null)
+            {
+                book = foundBook;
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private Task HandleSubmit()
+    {
+        if (book is not null)
+        {
+            Console.WriteLine("new book added");
+        }
+
+        NavigationManager.NavigateTo("/");
+        return Task.CompletedTask;
+    }
+
+}

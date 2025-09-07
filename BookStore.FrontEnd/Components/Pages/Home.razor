@@ -1,0 +1,73 @@
+﻿@page "/"
+
+<PageTitle>BookStore - Home</PageTitle>
+
+<h1 class="text-center">Book Store</h1>
+
+<p class="fs-4 text-center">Your one stop book store.</p>
+
+<div>
+    @if(books is null)
+    {
+        <div>
+            <p>Loading.....</p>
+        </div>
+    }
+    else
+    {
+        <div class="text-end w-75 mx-auto mb-2">
+            <a href="/add" class="btn bg-custom-dark text-white py-2 fs-5 px-4">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span class="ps-1">Add New Book</span>
+            </a>
+        </div>
+        
+        <div class="d-flex flex-wrap gap-4 mx-auto align-items-center justify-content-center py-2 my-2">
+            @foreach (var book in books)
+            {
+                <div class="card card-w-40 shadow ">
+                    <div class="card bg-custom-dark px-2 py-3">
+                        <h5 class="card-title text-white mb-3 fs-4">@book.Name</h5>
+                        <p class="card-text text-white fs-6">Author: @setAuthor(@book.AuthorId)</p>
+                        <p class="card-text text-white fs-6">Price: @book.Price</p>
+                        <p class="card-text text-white fs-6">Released: @book.ReleaseDate</p>
+                        <div class="text-end">
+                            <a href="@BookUrl(book.BookId)" class="btn btn-primary">Edit</a>
+                            <a href="#" class="btn btn-danger">Delete</a>
+                        </div>                        
+                    </div>
+                </div>
+            }
+        </div>        
+    }  
+</div>
+
+@code {
+
+    private static string BookUrl(int id) => $"/edit-book/{id}";
+
+    private Book[] books =
+        {
+            new Book{BookId=1, Name="Lord of the rings", Price=24.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=2, Name="Lord of the rings 1", Price=4.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=3, Name="Harry Potter", Price=8.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=4, Name="Harry Potter 2", Price=14.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
+    };
+
+    private Author[] authors =
+        {
+            new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
+            new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
+    };
+
+    private string? setAuthor(int? id)
+    {
+        var author = authors?.FirstOrDefault(a => a.AuthorId == id);
+
+        if (author is not null) return author.Name;
+
+        return "default";
+
+    }
+
+}
