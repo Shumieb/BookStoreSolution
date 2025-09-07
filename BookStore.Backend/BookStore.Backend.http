@@ -1,0 +1,56 @@
+﻿@BookStore.Backend_HostAddress = https://localhost:7122
+
+GET {{BookStore.Backend_HostAddress}}/books
+
+###
+
+
+GET {{BookStore.Backend_HostAddress}}/books/2
+
+###
+
+POST {{BookStore.Backend_HostAddress}}/books
+Content-Type: application/json
+{
+    "name": "Harry Potter 3",
+    "description": "This is a description for harry potter 4",
+    "authorid": 2,
+    "categoryid": 1,
+    "price": 22.99,
+    "releasedate": "2025-09-14"
+} 
+
+###
+
+PUT {{BookStore.Backend_HostAddress}}/books/3
+Content-Type: application/json
+{
+    "name": "Harry Potter 4",
+    "description": "This is a description for harry potter 4",
+    "authorid": 2,
+    "categoryid": 1,
+    "price": 2.99,
+    "releasedate": "2025-09-14"
+} 
+
+###
+
+DELETE {{BookStore.Backend_HostAddress}}/books/5
+
+###
+
+GET {{BookStore.Backend_HostAddress}}/authors
+
+###
+
+GET {{BookStore.Backend_HostAddress}}/authors/1
+
+###
+
+GET {{BookStore.Backend_HostAddress}}/categories
+
+###
+
+GET {{BookStore.Backend_HostAddress}}/categories/2
+
+###
