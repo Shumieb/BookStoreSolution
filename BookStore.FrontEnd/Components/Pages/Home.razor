@@ -2,21 +2,26 @@
 
 <PageTitle>BookStore - Home</PageTitle>
 
-<h1 class="text-center txt-custom-dark">Book Store</h1>
-
-<p class="fs-4 text-center txt-custom-dark">Your one stop book store.</p>
+<p class="fs-4 text-center txt-custom-dark mb-5">Your one stop book store.</p>
 
 <div>
     @if(books is null)
     {
-        <div>
-            <p>Loading.....</p>
+        <div class="text-center my-3">
+            <p class="fs-5 txt-custom-dark fw-bold">Loading.....</p>
         </div>
     }
     else
     {
-        <div class="text-end w-75 mx-auto mb-2">
-            <a href="/add" class="btn bg-dark-custom text-white py-2 fs-5 px-4">
+        <div class="d-flex justify-content-between align-items-center custom-w-80 mx-auto mb-2">
+            <div class="d-flex">
+                <InputText id="search" @bind-Value="searchTerm" class="form-control" style="width: 350px"/>
+                <button @onclick="SearchBooks" class="btn bg-custom-btn-dark txt-custom-dark ms-2 fs-5">
+                    <i class="bi bi-search"></i>
+                    <span class="ms-2">Search</span>
+                </button>
+            </div>
+            <a href="/add" class="btn bg-custom-btn-dark txt-custom-dark py-2 fs-5 px-3">
                 <i class="bi bi-plus-circle-fill"></i>
                 <span class="ps-1">Add New Book</span>
             </a>
@@ -63,6 +68,7 @@
 </div>
 
 @code {
+    private string searchTerm = string.Empty;
 
     private static string BookEditUrl(int id) => $"/edit-book/{id}";
 
@@ -74,19 +80,19 @@
             new Book{BookId=2, Name="Lord of the rings 1", Description="This is the lord of the rings 1", Price=4.99M, AuthorId=1, CategoryId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
             new Book{BookId=3, Name="Harry Potter", Description="This is harry potter", Price=8.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
             new Book{BookId=4, Name="Harry Potter 2", Description="This is harry potter 2", Price=14.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
-        };
+    };
 
     private Author[] authors =
         {
             new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
             new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
-        };
+    };
 
     private Category[] categories =
         {
             new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
             new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
-        };
+    };
 
     private string? setAuthor(int? id)
     {
@@ -106,6 +112,11 @@
 
         return "default";
 
+    }
+
+    private void SearchBooks()
+    {
+        Console.WriteLine("search books");
     }
 
 }

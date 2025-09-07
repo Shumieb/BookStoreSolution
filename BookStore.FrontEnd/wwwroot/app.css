@@ -54,6 +54,10 @@ h1:focus {
    width: 40%;  
 }
 
+.custom-w-80{
+    width: 80%;
+}
+
 .bg-dark-custom {
     background-color: #05515f;
 }
@@ -68,4 +72,8 @@ h1:focus {
 
 .txt-custom-danger {
     color: #ea8690;
+}
+
+.custom-vh {
+    min-height: 75vh;
 }

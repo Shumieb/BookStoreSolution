@@ -4,21 +4,23 @@
 
 <PageTitle>Delete Book</PageTitle>
 
-<div class="text-center my-3">
-    <h3 class="txt-custom-dark">Delete Book</h3>
+<div class="custom-vh">
+    <div class="text-center my-3">
+        <h3 class="txt-custom-dark">Delete Book</h3>
 
-    <p class="fs-4 txt-custom-dark">Are sure you want to delete: <span class="fw-bold">@bookName</span>?</p>
-</div>
-<div class="text-center">
-    <button @onclick="HandleDelete" class="btn bg-danger text-white me-2">
-        <i class="bi bi-trash"></i>
-        Delete
-    </button>
-    <a role="button" class="btn btn-secondary" href="/">
-        <i class="bi bi-x-circle"></i>
-        Cancel
-    </a>
+        <p class="fs-4 txt-custom-dark">Are sure you want to delete: <span class="fw-bold">@bookName</span>?</p>
+    </div>
+    <div class="text-center">
+        <button @onclick="HandleDelete" class="btn bg-danger text-white me-2">
+            <i class="bi bi-trash"></i>
+            Delete
+        </button>
+        <a role="button" class="btn btn-secondary" href="/">
+            <i class="bi bi-x-circle"></i>
+            Cancel
+        </a>
     
+    </div>
 </div>
 
 @code {
