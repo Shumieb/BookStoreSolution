@@ -4,7 +4,7 @@
 
 <PageTitle>Edit Book</PageTitle>
 
-<div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-custom-dark">
+<div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-dark-custom">
 
     <h3 class="text-center text-white">Edit Book</h3>
 
@@ -35,6 +35,18 @@
                 </div>
 
                 <div class="mb-3 text-white">
+                    <label for="category" class="form-label">Category</label>
+                    <InputSelect id="category" @bind-Value="book.CategoryId" class="form-select">
+                        <option value="">Select a Category</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.CategoryId">@category.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => book.CategoryId" class="txt-custom-danger mt-1" />
+                </div>
+
+                <div class="mb-3 text-white">
                     <label for="price" class="form-label">Price</label>
                     <InputNumber id="price" @bind-Value="book.Price" class="form-control" />
                     <ValidationMessage For="() => book.Price" class="text-danger mt-1" />
@@ -46,8 +58,14 @@
                 </div>
 
                 <div class="py-3 text-center">
-                    <button type="submit" class="btn btn-primary me-2">Edit</button>
-                    <a role="button" class="btn btn-secondary" href="/">Cancel</a>
+                    <button type="submit" class="btn bg-custom-btn-dark txt-custom-dark me-2">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit
+                        </button>
+                    <a role="button" class="btn btn-secondary" href="/">
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                        </a>
                 </div>
 
             </EditForm>
@@ -69,17 +87,19 @@
     private Book book { get; set; } = new()
     {
         Name = string.Empty,
+        Description=string.Empty,
         AuthorId = null,
+        CategoryId= null,
         Price = 0M,
         ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
     };
 
     private Book[] books =
         {
-            new Book{BookId=1, Name="Lord of the rings", Price=24.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=2, Name="Lord of the rings 1", Price=4.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=3, Name="Harry Potter", Price=8.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=4, Name="Harry Potter 2", Price=14.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
+            new Book{BookId=1, Name="Lord of the rings", Description="This is the lord of the rings",Price=24.99M, AuthorId=1, CategoryId=1,ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=2, Name="Lord of the rings 1", Description="This is the lord of the rings 1", Price=4.99M, AuthorId=1, CategoryId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=3, Name="Harry Potter", Description="This is harry potter", Price=8.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=4, Name="Harry Potter 2", Description="This is harry potter 2", Price=14.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
     };
 
 
@@ -88,6 +108,12 @@
             new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
             new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
     };
+
+    private Category[] categories =
+     {
+            new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
+            new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
+        };
 
     protected override void OnParametersSet()
     {
@@ -109,7 +135,7 @@
     {
         if (book is not null)
         {
-            Console.WriteLine("new book added");
+            Console.WriteLine("book edited");
         }
 
         NavigationManager.NavigateTo("/");

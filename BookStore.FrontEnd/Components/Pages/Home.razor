@@ -2,9 +2,9 @@
 
 <PageTitle>BookStore - Home</PageTitle>
 
-<h1 class="text-center">Book Store</h1>
+<h1 class="text-center txt-custom-dark">Book Store</h1>
 
-<p class="fs-4 text-center">Your one stop book store.</p>
+<p class="fs-4 text-center txt-custom-dark">Your one stop book store.</p>
 
 <div>
     @if(books is null)
@@ -16,25 +16,45 @@
     else
     {
         <div class="text-end w-75 mx-auto mb-2">
-            <a href="/add" class="btn bg-custom-dark text-white py-2 fs-5 px-4">
+            <a href="/add" class="btn bg-dark-custom text-white py-2 fs-5 px-4">
                 <i class="bi bi-plus-circle-fill"></i>
                 <span class="ps-1">Add New Book</span>
             </a>
         </div>
         
-        <div class="d-flex flex-wrap gap-4 mx-auto align-items-center justify-content-center py-2 my-2">
+        <div class="d-flex flex-wrap gap-4 mx-auto align-items-center justify-content-center py-3 my-2">
             @foreach (var book in books)
             {
                 <div class="card card-w-40 shadow ">
-                    <div class="card bg-custom-dark px-2 py-3">
-                        <h5 class="card-title text-white mb-3 fs-4">@book.Name</h5>
-                        <p class="card-text text-white fs-6">Author: @setAuthor(@book.AuthorId)</p>
-                        <p class="card-text text-white fs-6">Price: @book.Price</p>
-                        <p class="card-text text-white fs-6">Released: @book.ReleaseDate</p>
-                        <div class="text-end">
-                            <a href="@BookUrl(book.BookId)" class="btn btn-primary">Edit</a>
-                            <a href="#" class="btn btn-danger">Delete</a>
-                        </div>                        
+                    <div class="card bg-dark-custom px-2 pt-3 my-0">
+                        <h5 class="card-title text-white mb-3 fs-4 py-0 my-0">@book.Name</h5>
+                        <p class="card-text text-white fs-6 py-0 my-0">
+                            <span class="fw-bold">Author:</span> @setAuthor(@book.AuthorId)
+                         </p>
+                        <p class="card-text text-white fs-6 py-0 my-0">
+                            <span class="fw-bold">Category:</span> @setCategory(@book.CategoryId)
+                         </p>
+                        <p class="card-text text-white fs-6 py-0 my-0">
+                            <span class="fw-bold">Released:</span> @book.ReleaseDate
+                        </p>
+                        <p class="card-text text-white fs-6 py-3">@book.Description</p>
+
+                        <div class="d-flex justify-content-between align-items-center py-3">
+                            <p class="card-text text-white fs-6 py-0 my-0">
+                                <span class="fw-bold">Price:</span> @book.Price
+                            </p>
+                            <div class="text-end">
+                                <a href="@BookEditUrl(book.BookId)" class="btn bg-custom-btn-dark txt-custom-dark">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Edit
+                                 </a>
+                                <a href="@BookDeleteUrl(book.BookId)" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                                              
                     </div>
                 </div>
             }
@@ -44,27 +64,45 @@
 
 @code {
 
-    private static string BookUrl(int id) => $"/edit-book/{id}";
+    private static string BookEditUrl(int id) => $"/edit-book/{id}";
+
+    private static string BookDeleteUrl(int id) => $"/delete-book/{id}";
 
     private Book[] books =
         {
-            new Book{BookId=1, Name="Lord of the rings", Price=24.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=2, Name="Lord of the rings 1", Price=4.99M, AuthorId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=3, Name="Harry Potter", Price=8.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=4, Name="Harry Potter 2", Price=14.99M, AuthorId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
-    };
+            new Book{BookId=1, Name="Lord of the rings", Description="This is the lord of the rings",Price=24.99M, AuthorId=1, CategoryId=1,ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=2, Name="Lord of the rings 1", Description="This is the lord of the rings 1", Price=4.99M, AuthorId=1, CategoryId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=3, Name="Harry Potter", Description="This is harry potter", Price=8.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
+            new Book{BookId=4, Name="Harry Potter 2", Description="This is harry potter 2", Price=14.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
+        };
 
     private Author[] authors =
         {
             new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
             new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
-    };
+        };
+
+    private Category[] categories =
+        {
+            new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
+            new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
+        };
 
     private string? setAuthor(int? id)
     {
         var author = authors?.FirstOrDefault(a => a.AuthorId == id);
 
         if (author is not null) return author.Name;
+
+        return "default";
+
+    }
+
+    private string? setCategory(int? id)
+    {
+        var category = categories?.FirstOrDefault(a => a.CategoryId == id);
+
+        if (category is not null) return category.Name;
 
         return "default";
 

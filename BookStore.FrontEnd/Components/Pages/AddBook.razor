@@ -4,7 +4,7 @@
 
 <PageTitle>Add Book</PageTitle>
 
-<div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-custom-dark">
+<div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-dark-custom">
 
     <h3 class="text-center text-white">Add New Book</h3>
 
@@ -19,25 +19,37 @@
                 <div class="mb-3 text-white">
                         <label for="name" class="form-label">Name</label>
                         <InputText id="name" @bind-Value="book.Name" class="form-control" />
-                        <ValidationMessage For="() => book.Name" class="text-danger mt-1" />
+                    <ValidationMessage For="() => book.Name" class="txt-custom-danger mt-1" />
                     </div>
 
                 <div class="mb-3 text-white">
                     <label for="author" class="form-label">Author</label>
-                    <InputSelect id="genre" @bind-Value="book.AuthorId" class="form-select">
+                    <InputSelect id="author" @bind-Value="book.AuthorId" class="form-select">
                         <option value="">Select an Author</option>
                         @foreach (var author in authors)
                         {
                             <option value="@author.AuthorId">@author.Name</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="() => book.AuthorId" class="text-danger mt-1" />
+                    <ValidationMessage For="() => book.AuthorId" class="txt-custom-danger mt-1" />
+                </div>
+
+                <div class="mb-3 text-white">
+                    <label for="category" class="form-label">Category</label>
+                    <InputSelect id="category" @bind-Value="book.CategoryId" class="form-select">
+                        <option value="">Select a Category</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.CategoryId">@category.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => book.CategoryId" class="txt-custom-danger mt-1" />
                 </div>
 
                 <div class="mb-3 text-white">
                         <label for="price" class="form-label">Price</label>
                         <InputNumber id="price" @bind-Value="book.Price" class="form-control" />
-                        <ValidationMessage For="() => book.Price" class="text-danger mt-1" />
+                    <ValidationMessage For="() => book.Price" class="txt-custom-danger mt-1" />
                     </div>
 
                 <div class="mb-3 text-white">
@@ -46,8 +58,14 @@
                     </div>
 
                     <div class="py-3 text-center">
-                        <button type="submit" class="btn btn-primary me-2">Save</button>
-                        <a role="button" class="btn btn-secondary" href="/">Cancel</a>
+                    <button type="submit" class="btn bg-custom-btn-dark txt-custom-dark me-2">
+                        <i class="bi bi-floppy2"></i>
+                        Save
+                        </button>
+                        <a role="button" class="btn btn-secondary" href="/">
+                        <i class="bi bi-x-circle"></i>
+                            Cancel
+                            </a>
                     </div>                
 
                 </EditForm>
@@ -62,7 +80,9 @@
     private Book book { get; set; } = new()
     {
         Name = string.Empty,
-        AuthorId=null,
+        Description = string.Empty,
+        AuthorId = null,
+        CategoryId = null,
         Price = 0M,
         ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
     };
@@ -72,6 +92,12 @@
             new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
             new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
     };
+
+    private Category[] categories =
+      {
+            new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
+            new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
+        };
 
     private Task HandleSubmit()
     {

@@ -54,6 +54,18 @@ h1:focus {
    width: 40%;  
 }
 
-.bg-custom-dark {
-    background-color: #2c1a4c;
+.bg-dark-custom {
+    background-color: #05515f;
+}
+
+.bg-custom-btn-dark {
+    background-color: #6dbfb8;
+}
+
+.txt-custom-dark {
+    color: #032830;
+}
+
+.txt-custom-danger {
+    color: #ea8690;
 }
