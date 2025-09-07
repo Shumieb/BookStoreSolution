@@ -1,13 +1,17 @@
 ﻿@page "/"
+@inject BooksClient BooksClient;
+@inject AuthorsClient AuthorsClient;
+@inject CategoriesClient CategoriesClient;
+@attribute [StreamRendering]
 
 <PageTitle>BookStore - Home</PageTitle>
 
 <p class="fs-4 text-center txt-custom-dark mb-5">Your one stop book store.</p>
 
 <div>
-    @if(books is null)
+    @if(books is null || authors is null || categories is null)
     {
-        <div class="text-center my-3">
+        <div class="text-center my-3 custom-vh">
             <p class="fs-5 txt-custom-dark fw-bold">Loading.....</p>
         </div>
     }
@@ -69,39 +73,26 @@
 
 @code {
     private string searchTerm = string.Empty;
+    private Book[]? books;
+    private Author[]? authors;
+    private Category[]? categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await BooksClient.GetBooksAsync();
+        authors = await AuthorsClient.GetAuthorsAsync();
+        categories = await CategoriesClient.GetCategoriesAsync();
+    }
 
     private static string BookEditUrl(int id) => $"/edit-book/{id}";
-
     private static string BookDeleteUrl(int id) => $"/delete-book/{id}";
-
-    private Book[] books =
-        {
-            new Book{BookId=1, Name="Lord of the rings", Description="This is the lord of the rings",Price=24.99M, AuthorId=1, CategoryId=1,ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=2, Name="Lord of the rings 1", Description="This is the lord of the rings 1", Price=4.99M, AuthorId=1, CategoryId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=3, Name="Harry Potter", Description="This is harry potter", Price=8.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=4, Name="Harry Potter 2", Description="This is harry potter 2", Price=14.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
-    };
-
-    private Author[] authors =
-        {
-            new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
-            new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
-    };
-
-    private Category[] categories =
-        {
-            new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
-            new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
-    };
-
+    
     private string? setAuthor(int? id)
     {
         var author = authors?.FirstOrDefault(a => a.AuthorId == id);
 
         if (author is not null) return author.Name;
-
         return "default";
-
     }
 
     private string? setCategory(int? id)
@@ -109,9 +100,7 @@
         var category = categories?.FirstOrDefault(a => a.CategoryId == id);
 
         if (category is not null) return category.Name;
-
         return "default";
-
     }
 
     private void SearchBooks()

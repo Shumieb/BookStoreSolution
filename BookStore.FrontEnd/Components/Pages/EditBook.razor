@@ -1,18 +1,29 @@
 ﻿@page "/edit-book/{id:int}"
 @rendermode InteractiveServer
+@inject BooksClient BooksClient;
+@inject AuthorsClient AuthorsClient;
+@inject CategoriesClient CategoriesClient;
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit Book</PageTitle>
 
 <div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-dark-custom">
 
+    @if (authors is null || categories is null || book is null)
+    {
+        <div class="text-center my-3 custom-vh">
+            <p class="fs-5 txt-custom-dark fw-bold">Loading.....</p>
+        </div>
+    }
+    else
+    {
     <h3 class="text-center text-white">Edit Book</h3>
 
     <div class="my-3 mx-auto">
         <div class="">
             <EditForm Model="@book"
                       FormName="editBook"
-                      OnValidSubmit="HandleSubmit"
+                      OnValidSubmit="HandleSubmitAsync"
                       Enhance>
                 <DataAnnotationsValidator />
 
@@ -20,6 +31,12 @@
                     <label for="name" class="form-label">Name</label>
                     <InputText id="name" @bind-Value="book.Name" class="form-control" />
                     <ValidationMessage For="() => book.Name" class="text-danger mt-1" />
+                </div>
+
+                <div class="mb-3 text-white">
+                    <label for="name" class="form-label">Description</label>
+                    <InputText id="description" @bind-Value="book.Description" class="form-control" />
+                    <ValidationMessage For="() => book.Description" class="txt-custom-danger mt-1" />
                 </div>
 
                 <div class="mb-3 text-white">
@@ -67,79 +84,47 @@
                         Cancel
                         </a>
                 </div>
-
             </EditForm>
-
         </div>
     </div>
-
-
-
-
+    }
 </div>
 
 @code {
 
     [Parameter]
-    public int? id { get; set; }
+    public int id { get; set; }
 
     [SupplyParameterFromForm]
-    private Book book { get; set; } = new()
+    private Book? book { get; set; }
+
+    private Author[]? authors;
+    private Category[]? categories;
+
+    protected override async Task OnParametersSetAsync()
     {
-        Name = string.Empty,
-        Description=string.Empty,
-        AuthorId = null,
-        CategoryId= null,
-        Price = 0M,
-        ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
-    };
+        book = await BooksClient.GetBookAsync(id);
 
-    private Book[] books =
-        {
-            new Book{BookId=1, Name="Lord of the rings", Description="This is the lord of the rings",Price=24.99M, AuthorId=1, CategoryId=1,ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=2, Name="Lord of the rings 1", Description="This is the lord of the rings 1", Price=4.99M, AuthorId=1, CategoryId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=3, Name="Harry Potter", Description="This is harry potter", Price=8.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=4, Name="Harry Potter 2", Description="This is harry potter 2", Price=14.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
-    };
-
-
-    private Author[] authors =
-        {
-            new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
-            new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
-    };
-
-    private Category[] categories =
-     {
-            new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
-            new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
-        };
-
-    protected override void OnParametersSet()
-    {
-        if (id is not null)
-        {
-            Book? foundBook = books.FirstOrDefault(b => b.AuthorId == id); 
-            if(foundBook is not null)
-            {
-                book = foundBook;
-            }
-        }
-        else
+        if(book is null)
         {
             NavigationManager.NavigateTo("/");
         }
     }
 
-    private Task HandleSubmit()
+    protected override async Task OnInitializedAsync()
+    {
+        authors = await AuthorsClient.GetAuthorsAsync();
+        categories = await CategoriesClient.GetCategoriesAsync();
+    }
+
+    private async Task HandleSubmitAsync()
     {
         if (book is not null)
         {
-            Console.WriteLine("book edited");
+            await BooksClient.UpdateBookAsync(book);
         }
 
         NavigationManager.NavigateTo("/");
-        return Task.CompletedTask;
     }
 
 }

@@ -1,5 +1,6 @@
 ﻿@page "/delete-book/{id:int}"
 @rendermode InteractiveServer
+@inject BooksClient BooksClient;
 @inject NavigationManager NavigationManager
 
 <PageTitle>Delete Book</PageTitle>
@@ -11,7 +12,7 @@
         <p class="fs-4 txt-custom-dark">Are sure you want to delete: <span class="fw-bold">@bookName</span>?</p>
     </div>
     <div class="text-center">
-        <button @onclick="HandleDelete" class="btn bg-danger text-white me-2">
+        <button @onclick="HandleDeleteAsync" class="btn bg-danger text-white me-2">
             <i class="bi bi-trash"></i>
             Delete
         </button>
@@ -19,48 +20,32 @@
             <i class="bi bi-x-circle"></i>
             Cancel
         </a>
-    
     </div>
 </div>
 
 @code {
     [Parameter]
-    public int? id { get; set; }
+    public int id { get; set; }
 
     private string bookName = string.Empty;
 
-    private Book[] books =
-        {
-            new Book{BookId=1, Name="Lord of the rings", Description="This is the lord of the rings",Price=24.99M, AuthorId=1, CategoryId=1,ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=2, Name="Lord of the rings 1", Description="This is the lord of the rings 1", Price=4.99M, AuthorId=1, CategoryId=1, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=3, Name="Harry Potter", Description="This is harry potter", Price=8.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)},
-            new Book{BookId=4, Name="Harry Potter 2", Description="This is harry potter 2", Price=14.99M, AuthorId=2, CategoryId=2, ReleaseDate=new DateOnly(2015, 10, 21)}
-    };
+    protected override async Task OnParametersSetAsync()
+    {        
+        var book = await BooksClient.GetBookAsync(id);
 
-    protected override void OnParametersSet()
-    {
-        if (id is not null)
-        {
-            Book? foundBook = books.FirstOrDefault(b => b.AuthorId == id);
-            if (foundBook is not null)
-            {
-                bookName = foundBook.Name;
-            }
-        }
-        else
+        if (book is null)
         {
             NavigationManager.NavigateTo("/");
         }
+        else
+        {
+            bookName = book.Name;
+        }
     }
 
-    private Task HandleDelete()
+    private async Task HandleDeleteAsync()
     {
-        if (id is not null)
-        {
-            Console.WriteLine("delete book");
-        }
-
-        NavigationManager.NavigateTo("/");
-        return Task.CompletedTask;
+        await BooksClient.DeleteBookAsync(id);
+        NavigationManager.NavigateTo("/");  
     }
 }

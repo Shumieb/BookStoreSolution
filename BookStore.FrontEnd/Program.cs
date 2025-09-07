@@ -1,10 +1,23 @@
 using BookStore.FrontEnd.Components;
+using BookStore.FrontEnd.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var bookStoreAPIURL = builder.Configuration["BookStoreApiUrl"] ??
+                        throw new Exception("BookStoreApiUrl is not set.");
+
+builder.Services.AddHttpClient<BooksClient>(
+    client => client.BaseAddress = new Uri(bookStoreAPIURL));
+
+builder.Services.AddHttpClient<AuthorsClient>(
+    client => client.BaseAddress = new Uri(bookStoreAPIURL));
+
+builder.Services.AddHttpClient<CategoriesClient>(
+    client => client.BaseAddress = new Uri(bookStoreAPIURL));
 
 var app = builder.Build();
 

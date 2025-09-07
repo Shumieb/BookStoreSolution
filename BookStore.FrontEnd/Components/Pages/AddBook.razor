@@ -1,25 +1,44 @@
 ﻿@page "/add"
-@rendermode InteractiveServer
+@inject BooksClient BooksClient;
+@inject AuthorsClient AuthorsClient;
+@inject CategoriesClient CategoriesClient;
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
 
 <PageTitle>Add Book</PageTitle>
 
 <div class="border w-50 mx-auto my-4 px-5 py-4 my-5 border-secondary border-2 rounded shadow bg-dark-custom">
 
-    <h3 class="text-center text-white">Add New Book</h3>
+    @if(authors is null || categories is null)
+    {
+        <div class="text-center my-3 custom-vh">
+            <p class="fs-5 txt-custom-dark fw-bold">Loading.....</p>
+        </div>
+    }
+    else
+    {
+        <h3 class="text-center text-white">Add New Book</h3>
 
         <div class="my-3 mx-auto">
             <div class="">
                 <EditForm Model="@book"
                           FormName="addBook"
-                          OnValidSubmit="HandleSubmit"
-                          Enhance>
+                          OnValidSubmit="HandleSubmitAsync"
+                          Enhance
+                >
                     <DataAnnotationsValidator />
 
                 <div class="mb-3 text-white">
                         <label for="name" class="form-label">Name</label>
                         <InputText id="name" @bind-Value="book.Name" class="form-control" />
                     <ValidationMessage For="() => book.Name" class="txt-custom-danger mt-1" />
+                    </div>
+
+                    <div class="mb-3 text-white">
+                        <label for="name" class="form-label">Description</label>
+                        <InputText id="description" @bind-Value="book.Description" class="form-control" />
+                        <ValidationMessage For="() => book.Description" class="txt-custom-danger mt-1" />
                     </div>
 
                 <div class="mb-3 text-white">
@@ -67,11 +86,10 @@
                             Cancel
                             </a>
                     </div>                
-
                 </EditForm>
             </div>
         </div>
-
+    }
 </div>
 
 @code {
@@ -87,27 +105,19 @@
         ReleaseDate = DateOnly.FromDateTime(DateTime.UtcNow)
     };
 
-    private Author[] authors =
-        {
-            new Author{AuthorId=1, Name="R.K. Token", Added=new DateOnly(2025, 09, 14)},
-            new Author{AuthorId=2, Name="J.K Rowling", Added=new DateOnly(2025, 09, 14)}
-    };
+    private Author[]? authors;
+    private Category[]? categories;
 
-    private Category[] categories =
-      {
-            new Category{CategoryId=1, Name="Fiction", Description="This is the fiction description"},
-            new Category{CategoryId=2, Name="Drama", Description="This is the drama description"}
-        };
-
-    private Task HandleSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        if(book is not null)
-        {
-            Console.WriteLine("new book added");
-        }
+        authors = await AuthorsClient.GetAuthorsAsync();
+        categories = await CategoriesClient.GetCategoriesAsync();
+    }
 
+    private async Task HandleSubmitAsync()
+    {
+        await BooksClient.AddBookAsync(book);
         NavigationManager.NavigateTo("/");
-        return Task.CompletedTask;
     }
 
 }
